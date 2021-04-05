@@ -100,6 +100,9 @@ class DiagramServerProtocol(WebSocketServerProtocol):
 			elif(action == "generateCity"):
 				d = threads.deferToThread(self.onGenerateCity, data)
 				d.addCallback(self.publishResult)
+			elif(action == "generateClasses"):
+				d = threads.deferToThread(self.onGenerateClasses, data)
+				d.addCallback(self.publishResult)
 		return
 		
 	def onSubscribe(self, data):
@@ -165,6 +168,13 @@ class DiagramServerProtocol(WebSocketServerProtocol):
 	def onClose(self, wasClean, code, reason):
 		self.factory.unsubscribe(self)
 		print("WebSocket connection closed: {0}".format(reason))
+
+	def onGenerateClasses(self, data):
+		# TODO implement
+		jsonData = json.loads(data)
+		
+
+		return data
 
 
 if __name__ == '__main__':
