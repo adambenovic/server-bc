@@ -249,11 +249,6 @@ if __name__ == '__main__':
 	
 	paths = args.paths or []
 	syspaths = args.sys_paths or []
-	###
-	#paths = [r"C:\Python27\Lib\site-packages\pylint", ]
-	#syspaths = [r"C:\Python27\Lib\site-packages", ]
-	#paths = ["c:\\Python27\\Lib\\site-packages\\django\\template\\backends"]
-	#sysPaths = ["c:\\Python27\\Lib\\site-packages"]
 	
 	prr = PyreverseRun(paths, syspaths)
 	diadefs = prr.Diadefs
@@ -262,8 +257,6 @@ if __name__ == '__main__':
 	pdd, cdd = diadefs
 	cd = ClassDiagram(cdd)
 	pd = PackageDiagram(pdd, cdd.classes())
-	#ci = City(cdd)
-	#print(ci.Dictionary["classes"])
 	
 	if args.l:
 		print(json.dumps(cd.Dictionary, indent=4))
@@ -271,3 +264,4 @@ if __name__ == '__main__':
 	if args.o:
 		with open(args.o, "w") as out:
 			json.dump(cd.Dictionary, out, indent=4)
+

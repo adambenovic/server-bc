@@ -63,7 +63,6 @@ class DiagramServerFactory(WebSocketServerFactory):
 	def publish(self, action, msg):
 		for client in self.subscriptions[action]:
 			client.sendMessage(Helpers.encode(msg))
-			# print ("Publishing - client:", client.peer, "action:", action)
 		return
 
 class DiagramServerProtocol(WebSocketServerProtocol):
@@ -107,7 +106,6 @@ class DiagramServerProtocol(WebSocketServerProtocol):
 		
 	def onSubscribe(self, data):
 		events = data.get("args", {}).get("events")
-		#TODO if None raise data error
 		self.factory.subscribe(self, events)
 		return
 		
@@ -121,7 +119,6 @@ class DiagramServerProtocol(WebSocketServerProtocol):
 		type = args.get("type")
 		fsPaths = args.get("fsPaths")
 		sysPaths = args.get("sysPaths")
-		#TODO if None raise data error
 		if(type == "class"):
 			cd = DiagramTools.createClassDiagram(fsPaths, sysPaths)
 			args["data"] = cd
@@ -170,9 +167,25 @@ class DiagramServerProtocol(WebSocketServerProtocol):
 		print("WebSocket connection closed: {0}".format(reason))
 
 	def onGenerateClasses(self, data):
-		# TODO implement
-		jsonData = json.loads(data)
-		
+		args = data.get("args", {})
+		for key, item in args.items(): 
+			fsPath = item.get("fsPath")[0]
+			methods = item.get("methods", [])
+			with open(fsPath, "a") as f:
+				with open(fsPath, "r") as r:
+					oldCount = len(r.readlines())
+					r.close()
+				f.write("\n\nclass " + key + "():\n")
+				for method in methods:
+					if method != "":
+						f.write("\tdef " + method + "():\n\t\treturn\n\n")
+
+				with open(fsPath, "r") as r:
+					newCount = len(r.readlines())
+					r.close()
+				f.close()
+
+		data = {"action":"ideAction", "args":{"type":"goto", "path":fsPath, "fromLine":oldCount, "toLine":newCount}}
 
 		return data
 
